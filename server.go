@@ -21,6 +21,7 @@ type JsonResult struct {
 
 var dataMap map[string]map[string]string
 
+
 func readConfig() string {
 	f, err := os.Open("config")
 	if err != nil {
@@ -38,8 +39,8 @@ func readConfig() string {
 	return string(fd)
 }
 
+//验证是否在开盘时间内
 func checkTime() (res bool) {
-	return true
 	now := time.Now()
 	hours, minutes, _ := now.Clock()
 	hiStr := strconv.Itoa(hours) + strconv.Itoa(minutes)
@@ -56,6 +57,7 @@ func checkTime() (res bool) {
 	}
 }
 
+//获取数据 到 dataMap
 func getStockData(code string) {
 
 	res := checkTime()
@@ -97,6 +99,7 @@ func getStockData(code string) {
 
 }
 
+//api服务，实现一个对dataMap的简易分页
 func IndexHandle(w http.ResponseWriter, r *http.Request) {
 
 	values := r.URL.Query()
@@ -140,7 +143,7 @@ func IndexHandle(w http.ResponseWriter, r *http.Request) {
 func main() {
 
 	dataMap = make(map[string]map[string]string)
-
+	//读取配置
 	configStr := readConfig()
 	configMap := make(map[int]string)
 
@@ -149,6 +152,7 @@ func main() {
 		configMap[index] = code
 	}
 
+	//每1秒检测一次
 	task := make(chan string)
 	ticker := time.NewTicker(time.Second * 1)
 	go func() {
