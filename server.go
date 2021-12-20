@@ -10,6 +10,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 	iconv "github.com/djimenez/iconv-go"
 )
@@ -20,7 +21,7 @@ type JsonResult struct {
 }
 
 var dataMap map[string]map[string]string
-
+var mu sync.RWMutex
 
 func readConfig() string {
 	f, err := os.Open("config")
@@ -95,8 +96,9 @@ func getStockData(code string) {
 	m["title"] = title
 	m["zx"] = data[1]
 	m["zdf"] = data[3]
+	mu.Lock()
 	dataMap[code] = m
-
+	mu.Unlock()
 }
 
 //api服务，实现一个对dataMap的简易分页
