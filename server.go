@@ -149,7 +149,7 @@ func main() {
 	configStr := readConfig()
 	configMap := make(map[int]string)
 
-	configArr := strings.Split(configStr, "\r\n")
+	configArr := strings.Split(configStr, "\n")
 	for index, code := range configArr {
 		configMap[index] = code
 	}
@@ -178,7 +178,7 @@ func main() {
 	http.HandleFunc("/", IndexHandle)
 
 	// 启动web服务，监听9090端口
-	err := http.ListenAndServe(":9090", nil)
+	err := http.ListenAndServe(":3333", nil)
 	if err != nil {
 		fmt.Println("ListenAndServe: ", err)
 		return
