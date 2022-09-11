@@ -65,12 +65,20 @@ func getStockData(code string) {
 	if res == false {
 		return
 	}
-
-	resp, err := http.Get("https://hq.sinajs.cn/format=text&list=s_" + code)
+	client := &http.Client{}
+	//生成要访问的url
+	url := "https://hq.sinajs.cn/format=text&list=s_" + code
+	//提交请求
+	reqest, err := http.NewRequest("GET", url, nil)
+	//增加header选项
+	reqest.Header.Add("Referer", "https://finance.sina.com.cn")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+
+	resp, _ := client.Do(reqest)
+
 	defer resp.Body.Close()
 	var buffer [512]byte
 	result := bytes.NewBuffer(nil)
@@ -178,7 +186,7 @@ func main() {
 	http.HandleFunc("/", IndexHandle)
 
 	// 启动web服务，监听9090端口
-	err := http.ListenAndServe(":3333", nil)
+	err := http.ListenAndServe(":9090", nil)
 	if err != nil {
 		fmt.Println("ListenAndServe: ", err)
 		return
